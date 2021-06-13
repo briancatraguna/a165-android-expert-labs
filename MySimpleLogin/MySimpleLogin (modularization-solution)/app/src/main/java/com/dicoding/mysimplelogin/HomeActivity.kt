@@ -3,9 +3,13 @@ package com.dicoding.mysimplelogin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.dicoding.core.SessionManager
 import com.dicoding.core.UserRepository
 import com.dicoding.mysimplelogin.databinding.ActivityHomeBinding
+import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
+import com.google.android.play.core.splitinstall.SplitInstallRequest
+import java.lang.Exception
 
 class HomeActivity : AppCompatActivity() {
 
@@ -26,6 +30,41 @@ class HomeActivity : AppCompatActivity() {
             userRepository.logoutUser()
             moveToMainActivity()
         }
+
+        binding.fab.setOnClickListener {
+            try {
+                installChatModule()
+            } catch (e: Exception){
+                Toast.makeText(this,"Module not found",Toast.LENGTH_SHORT).show()
+            }
+
+        }
+    }
+
+    private fun installChatModule() {
+        val splitInstallManager = SplitInstallManagerFactory.create(this)
+        val moduleChat = "chat"
+        if (splitInstallManager.installedModules.contains(moduleChat)){
+            moveToChatActivity()
+            Toast.makeText(this, "Open module", Toast.LENGTH_SHORT).show()
+        } else {
+            val request = SplitInstallRequest.newBuilder()
+                .addModule(moduleChat)
+                .build()
+
+            splitInstallManager.startInstall(request)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Success installing module", Toast.LENGTH_SHORT).show()
+                    moveToChatActivity()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Error installing module", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun moveToChatActivity() {
+        startActivity(Intent(this, Class.forName("com.briancatraguna.chat.ChatActivity")))
     }
 
     private fun moveToMainActivity() {
