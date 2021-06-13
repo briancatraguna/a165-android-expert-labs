@@ -3,6 +3,7 @@ package com.dicoding.mysimplelogin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.briancatraguna.core.UserRepository
 import com.dicoding.mysimplelogin.databinding.ActivityMainBinding
 import javax.inject.Inject
 
